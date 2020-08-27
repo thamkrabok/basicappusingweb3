@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <script src="web3.js"></script>
+        <script>
+            var Web3 = require('web3');
+            var web3 = new Web3();
+            //connect to the node
+            web3.setProvider(new
+            web3.providers.HttpProvider('http://localhost:8545'));
+            var account;
+            onload = function getAccount() {
+              web3.eth.getAccounts((error, accs) => {
+                if(error) {
+                  document.getElementById('accounts').innerHTML = err;
+                }
+                else {
+                  account = accs[0];
+                  document.getElementById('accounts').innerHTML = account;
+                  web3.eth.getBalance(account, (error, balance) => {
+                     if(error) {
+                       document.getElementById('AccountsBalance').innerHTML =  error;
+                     }
+                     else {
+                       document.getElementById('AccountsBalance').innerHTML =  web3.fromWei(balance,"ether") + ' ether';
+                     }
+                  })
+                }
+              })
+             }
+
+             function sendTransaction() {
+               addressTo = document.getElementById('addressTo').value;
+               amount = document.getElementById('amount').value;
+               pass = document.getElementById('pass').value;
+
+               web3.personal.sendTransaction({from: account, to: addressTo,
+               value: web3.toWei(10, "ether")}, pass, (error, transactionHash) => {
+                 if(error) {
+                   document.getElementById('transactionHash').innerHTML =  error;
+                 }
+                 else {
+                   document.getElementById('transactionHash').innerHTML =  transactionHash;
+                 }
+              })
+             }
+
+        </script>
+    </head>
+    <body>
+        <h1>Node 1</h1>
+        <h1>Money Transfer</h1>
+        <hr>
+        <h1>Main Account Info</h1>
+        <p><span>Address :</span><span id="accounts"></span></p>
+        <p><span>Balance :</span><span id="AccountsBalance"></span></p>
+        <hr/>
+        <div>
+          <div style="display:flex;flex-direction:row;">
+            <p>Transfer to:</p>
+            <input type="text" id="addressTo"/>
+            <p>Amount (ether):</p>
+            <input type="text" id="amount"/>
+            <p>pass pharse:</p>
+            <input type="text" id="pass"/>
+          </div>
+          <button type="button" onclick="sendTransaction()">Send</button>
+        </div>
+        <hr/>
+        <p><span>Transaction Hash:</span><span id="transactionHash"></span></p>
+        <!-- <button type="button" onclick="getAccount()">List Account</button> -->
+        <br>
+    </body>
+</html>
